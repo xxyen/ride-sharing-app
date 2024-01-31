@@ -3,9 +3,11 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=15)
+    email = models.EmailField(blank=True, null=True)
     is_driver = models.BooleanField(default=False)
-
+    def __str__(self):
+        return str(user)
+    
 class Vehicle(models.Model):
     owner = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     vehicle_type = models.CharField(max_length=255)
@@ -30,5 +32,5 @@ class Ride(models.Model):
         ('confirmed', 'Confirmed'),
         ('finished', 'Finished'),
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='request')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     
