@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
     is_driver = models.BooleanField(default=False)
+    driver_status = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username

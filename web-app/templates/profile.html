@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="container mt-3">
+    <h2>Personal Info</h2>
+    <p>Username: {{ request.user.username }}</p>
+    <p>First Name: {{ request.user.first_name }}</p>
+    <p>Last Name: {{ request.user.last_name }}</p>
+    <p>Email: {{ request.user.email }}</p>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editPersonalInfoModal">
+        Edit Personal Info
+    </button>
+
+    <!-- Edit Personal Info -->
+    <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPersonalInfoModalLabel">Edit Personal Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {{ user_form|crispy }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="edit_user" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <h2>Change Password</h2>
+
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+        Change Password
+    </button>
+
+    <!-- Change Password -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {{ password_form|crispy }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="change_password" class="btn btn-warning">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if is_driver %}
+    <!-- <h2>Current Driver Status: {% if request.user.driver_status %}OPEN{% else %}CLOSED{% endif %}</h2> -->
+    <h2>Current Driver Status: 
+        <span class="{% if request.user.driver_status %}text-success{% else %}text-danger{% endif %}">
+            {% if request.user.driver_status %}OPEN{% else %}CLOSED{% endif %}
+        </span>
+    </h2>
+    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editDriverStatusModal">
+        Edit Driver Status
+    </button>
+
+    <!-- Edit Driver Status -->
+    <div class="modal fade" id="editDriverStatusModal" tabindex="-1" aria-labelledby="editDriverStatusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDriverStatusModalLabel">Edit Driver Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        <!-- Driver Status Select -->
+                        <div class="mb-3">
+                            <label for="driverStatusSelect" class="form-label">Driver Status</label>
+                            <select class="form-select" id="driverStatusSelect" name="driver_status">
+                                <option value="true" {% if request.user.driver_status %}selected{% endif %}>OPEN</option>
+                                <option value="false" {% if not request.user.driver_status %}selected{% endif %}>CLOSED</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="edit_driver_status" class="btn btn-info">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <h2>Vehicle Info</h2>
+    <!-- vehicle Info -->
+    <p>Vehicle Type: {{ request.user.vehicle.vehicle_type }}</p>
+    <p>License Plate: {{ request.user.vehicle.license_plate }}</p>
+    <p>Max Passengers: {{ request.user.vehicle.max_passengers }}</p>
+    <p>Additional Info: {{ request.user.vehicle.additional_info }}</p>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editVehicleInfoModal">
+        Edit Vehicle Info
+    </button>
+
+    <!-- Edit Vehicle Info -->
+    <div class="modal fade" id="editVehicleInfoModal" tabindex="-1" aria-labelledby="editVehicleInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editVehicleInfoModalLabel">Edit Vehicle Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {{ vehicle_form|crispy }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="edit_vehicle" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        You are not a driver now. Do you want to become a driver?
+        <a href="{% url 'register_driver' %}" class="alert-link">Click to register as a driver</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    var myModal = document.getElementById('myModal')
+    var myInput = document.getElementById('myInput')
+
+    myModal.addEventListener('shown.bs.modal', function () {
+      myInput.focus()
+    })
+</script>
+
+<style>
+.text-success {
+    color: green;
+}
+
+.text-danger {
+    color: red;
+}
+</style>
+
+{% endblock %}
+
+
