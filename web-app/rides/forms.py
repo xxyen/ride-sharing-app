@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm,PasswordChangeForm
 from django.contrib.auth.models import User
-from .models import CustomUser, Vehicle
+from .models import CustomUser, Vehicle, Ride
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -50,3 +50,11 @@ class DriverRegistrationForm(forms.ModelForm):
             vehicle.owner.save()
             vehicle.save()
         return vehicle
+
+class RideRequestForm(forms.ModelForm):
+    class Meta:
+        model = Ride
+        fields = ['destination_address', 'arrival_datetime', 'total_passengers', 'vehicle_type', 'shared_ride', 'additional_info']
+        widgets = {
+            'arrival_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }

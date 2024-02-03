@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserEditForm, CustomUserPasswordChangeForm, VehicleForm, DriverRegistrationForm
-from .models import CustomUser, Vehicle
+from .forms import CustomUserEditForm, CustomUserPasswordChangeForm, VehicleForm, DriverRegistrationForm, RideRequestForm
+from .models import CustomUser, Vehicle, Ride
 
 # Create your views here.
 def register(response):
@@ -82,3 +82,24 @@ def register_driver(request):
         form = DriverRegistrationForm()
 
     return render(request, 'register_driver.html', {'form': form})
+
+@login_required
+def ride_request(request):
+    if request.method == 'POST':
+        form = RideRequestForm(request.POST)
+        if form.is_valid():
+            ride = form.save(commit=False)
+            ride.owner = request.user
+            ride.save()
+            return redirect('my_rides')
+    else:
+        form = RideRequestForm()
+    return render(request, 'ride_request.html', {'form': form})
+
+@login_required
+def my_rides(request):
+    owned_rides = Ride.objects.filter(owner=request.user)
+    shared_rides = Ride.objects.filter(sharers=request.user)
+    all_rides = owned_rides | shared_rides 
+    context = {'rides': all_rides.distinct()}
+    return render(request, 'my_rides.html', context)

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}My Rides{% endblock %}
+{% load crispy_forms_tags%}
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="container my-4">
+    <h2>My Rides</h2>
+    <div class="row">
+        {% for ride in rides %}
+        <div class="col-md-4 my-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Destination: {{ ride.destination_address }}</h5>
+                    <p class="card-text">Arrival: {{ ride.arrival_datetime }}</p>
+                    <p class="card-text">Status: <span class="badge {% if ride.status == 'open' %}bg-primary{% elif ride.status == 'cancelled' %}bg-danger{% elif ride.status == 'confirmed' %}bg-success{% else %}bg-secondary{% endif %}">{{ ride.get_status_display }}</span></p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>You have no rides.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
