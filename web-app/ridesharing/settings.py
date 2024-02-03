@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-hn@l)9o8#c9)t$!d0mfv69tbfby__rf1rauuagd4#d6e+q8o@j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["web", "67.159.94.227"]
+ALLOWED_HOSTS = ["web", "67.159.94.227","67.159.89.242"]
 
 
 # Application definition
@@ -79,8 +79,8 @@ WSGI_APPLICATION = 'ridesharing.wsgi.application'
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE' : 'django.db.backends.postgresql',
         # local develop
         'NAME' : 'vtalawcz',
@@ -142,3 +142,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+AUTH_USER_MODEL = 'rides.CustomUser'

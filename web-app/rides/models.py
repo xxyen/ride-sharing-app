@@ -1,24 +1,23 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email = models.EmailField(blank=True, null=True)
+class CustomUser(AbstractUser):
     is_driver = models.BooleanField(default=False)
+
     def __str__(self):
-        return str(user)
+        return self.username
     
 class Vehicle(models.Model):
-    owner = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
+    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     vehicle_type = models.CharField(max_length=255)
     license_plate = models.CharField(max_length=20)
     max_passengers = models.PositiveIntegerField()
     additional_info = models.TextField(blank=True)
 
 class Ride(models.Model):
-    owner = models.ForeignKey(UserProfile, related_name='owned_rides', on_delete=models.CASCADE)
-    driver = models.ForeignKey(UserProfile, related_name='driven_rides', on_delete=models.CASCADE, null=True, blank=True)
-    sharers = models.ManyToManyField(UserProfile, related_name='shared_rides', blank=True)
+    owner = models.ForeignKey(CustomUser, related_name='owned_rides', on_delete=models.CASCADE)
+    driver = models.ForeignKey(CustomUser, related_name='driven_rides', on_delete=models.CASCADE, null=True, blank=True)
+    sharers = models.ManyToManyField(CustomUser, related_name='shared_rides', blank=True)
     starting_location = models.TextField()
     destination_address = models.TextField()
     arrival_datetime = models.DateTimeField()
