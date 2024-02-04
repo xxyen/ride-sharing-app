@@ -1,26 +1,117 @@
 {% extends "base.html" %}
 
 {% block title %}My Rides{% endblock %}
-{% load crispy_forms_tags%}
+
+{% load crispy_forms_tags %}
+
 {% block content %}
 {% include "navbar.html" %}
 
 <div class="container my-4">
     <h2>My Rides</h2>
-    <div class="row">
-        {% for ride in rides %}
-        <div class="col-md-4 my-2">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Destination: {{ ride.destination_address }}</h5>
-                    <p class="card-text">Arrival: {{ ride.arrival_datetime }}</p>
-                    <p class="card-text">Status: <span class="badge {% if ride.status == 'open' %}bg-primary{% elif ride.status == 'cancelled' %}bg-danger{% elif ride.status == 'confirmed' %}bg-success{% else %}bg-secondary{% endif %}">{{ ride.get_status_display }}</span></p>
+    {% for category, rides in rides_categories %}
+        <h3>{{ category }} Rides</h3>
+        <div class="row">
+            {% for ride in rides %}
+                <div class="col-md-4 my-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Destination: {{ ride.destination_address }}</h5>
+                            <p class="card-text">Arrival: {{ ride.arrival_datetime }}</p>
+                            <p class="card-text">Status: <span class="badge {% if ride.status == 'open' %}bg-primary{% elif ride.status == 'cancelled' %}bg-danger{% elif ride.status == 'confirmed' %}bg-success{% else %}bg-secondary{% endif %}">{{ ride.get_status_display }}</span></p>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#rideDetailsModal-{{ ride.id }}">Details</button>
+                            
+                            <!-- Ride Details Modal -->
+                            <div class="modal fade" id="rideDetailsModal-{{ ride.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Ride Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Ride details go here -->
+                                            <p><strong>Owner:</strong> {{ ride.owner.username }}</p>
+                                            <p><strong>Driver:</strong> {% if ride.driver %}{{ ride.driver.username }}{% else %}N/A{% endif %}</p>
+                                            <p><strong>Sharers:</strong> {% for sharer in ride.sharers.all %}{{ sharer.username }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</p>
+                                            <p><strong>Starting Location:</strong> {{ ride.starting_location }}</p>
+                                            <p><strong>Destination Address:</strong> {{ ride.destination_address }}</p>
+                                            <p><strong>Arrival Datetime:</strong> {{ ride.arrival_datetime|date:"F d, Y H:i" }}</p>
+                                            <p><strong>Total Passengers:</strong> {{ ride.total_passengers }}</p>
+                                            <p><strong>Vehicle Type:</strong> {{ ride.vehicle_type }}</p>
+                                            <p><strong>Shared Ride:</strong> {{ ride.shared_ride|yesno:"Yes,No" }}</p>
+                                            <p><strong>Additional Info:</strong> {{ ride.additional_info }}</p>
+                                            <p><strong>Status:</strong> {{ ride.get_status_display }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Edit Ride Link/Button -->
+                            {% if category == 'Owned' and ride.status == 'open' %}
+                            <a href="{% url 'edit_ride' ride.id %}" class="btn btn-primary">Edit</a>
+
+                                <!-- Add Edit Modal Here -->
+                            {% elif category == 'Shared' and ride.status == 'open' %}
+                                <!-- Quit Ride Button -->
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#quitRideModal-{{ ride.id }}">Quit</button>
+                                <!-- Quit Ride Modal -->
+                                <div class="modal fade" id="quitRideModal-{{ ride.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Quit</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to quit this ride?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="{% url 'quit_ride' ride.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-warning">Confirm Quit</button>
+                                                </form>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% elif category == 'Driven' and ride.status == 'confirmed' %}
+                                <!-- Mark as Finished Button -->
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#finishRideModal-{{ ride.id }}">Mark as Finished</button>
+                                <!-- Mark as Finished Modal -->
+                                <div class="modal fade" id="finishRideModal-{{ ride.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Finish</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to mark this ride as finished?
+                                            </div>
+                                           
+                                            <div class="modal-footer">
+                                                <form action="{% url 'finish_ride' ride.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-success">Confirm Finish</button>
+                                                </form>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% empty %}
+                <div class="col-12">
+                    <p>No {{ category | lower }} rides available.</p>
+                </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p>You have no rides.</p>
-        {% endfor %}
-    </div>
+    {% endfor %}
 </div>
+
 {% endblock %}

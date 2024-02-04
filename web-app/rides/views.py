@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserEditForm, CustomUserPasswordChangeForm, VehicleForm, DriverRegistrationForm, RideRequestForm
 from .models import CustomUser, Vehicle, Ride
+from django.contrib import messages
 
 # Create your views here.
 def register(response):
@@ -100,6 +101,65 @@ def ride_request(request):
 def my_rides(request):
     owned_rides = Ride.objects.filter(owner=request.user)
     shared_rides = Ride.objects.filter(sharers=request.user)
-    all_rides = owned_rides | shared_rides 
-    context = {'rides': all_rides.distinct()}
+    
+    if request.user.is_driver:
+        driven_rides = Ride.objects.filter(driver=request.user)
+    else:
+        driven_rides = Ride.objects.none()
+
+    rides_categories = [
+        ('Owned', owned_rides),
+        ('Shared', shared_rides),
+        ('Driven', driven_rides),
+    ]
+
+    context = {
+        'rides_categories': rides_categories,
+    }
     return render(request, 'my_rides.html', context)
+
+
+@login_required
+def finish_ride(request, ride_id):
+    ride = get_object_or_404(Ride, pk=ride_id)
+
+    if request.method == "POST":
+        if request.user == ride.driver and ride.status == 'confirmed':
+            ride.status = 'finished'
+            ride.save()
+            messages.success(request, "The ride has been marked as finished.")
+        else:
+            messages.error(request, "You are not authorized to finish this ride or the ride is not in the correct state.")
+
+        return redirect('my_rides')  
+    else:
+        return redirect('my_rides')
+
+@login_required
+def quit_ride(request, ride_id):
+    ride = get_object_or_404(Ride, pk=ride_id)
+
+    if request.method == "POST":
+        if request.user in ride.sharers.all():
+            ride.sharers.remove(request.user)
+            messages.success(request, "You have successfully quit the ride.")
+        else:
+            messages.error(request, "You are not a sharer of this ride.")
+
+        return redirect('my_rides') 
+    else:
+        return redirect('my_rides')
+
+@login_required
+def edit_ride(request, ride_id):
+    ride = get_object_or_404(Ride, id=ride_id, owner=request.user)  # Ensure only the owner can edit
+    if request.method == 'POST':
+        form = RideRequestForm(request.POST, instance=ride)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Ride details updated successfully.")
+            return redirect('my_rides')
+    else:
+        form = RideRequestForm(instance=ride)
+
+    return render(request, 'ride_edit.html', {'form': form, 'ride_id': ride.id})  # Render ride_edit.html
