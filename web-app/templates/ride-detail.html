@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+</head>
+
+<style>
+    .custom-label {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 8px;
+        text-align: left;
+        margin-top: 10px;
+
+    }
+
+    .custom-search {
+        margin-top: 20px;
+    }
+
+    .background-container {
+        padding: 10px;
+        height: 100%;
+    }
+
+    .loop-container {
+        margin-bottom: -100px;
+        position: relative;
+        color: black;
+    }
+
+    .smaller-image {
+        max-width: 200px;
+        max-height: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .container-border {
+        border: 1.2px dashed rgb(156, 155, 155);
+        padding: 0;
+        margin: 60px;
+        margin-top: 120px;
+        margin-bottom: 120px;
+        border-radius: 10px;
+        height: 600px;
+    }
+
+    .container-border .row {
+        margin: 0;
+        padding: 0;
+    }
+
+    .text-container {
+        padding: 5;
+    }
+
+    .text-setter {
+        font-size: 18px;
+        color: whitesmoke;
+        /* Set the desired font size */
+    }
+
+    .custom-button {
+        width: 150px;
+        height: 50px;
+        border-radius: 10px;
+        position: absolute;
+        bottom: 80px;
+        right: 250px;
+        border-radius: 10px;
+    }
+
+    .custom-button-back {
+        width: 600px;
+        height: 20px;
+        border-radius: 10px;
+        position: absolute;
+        bottom: 140px;
+        right: 130px;
+        border-radius: 20px;
+    }
+
+
+
+    .bold-text {
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .background-color {
+        background-color: #1a1a1a;
+
+    }
+
+    .theme-color {
+        color: white;
+    }
+</style>
+
+<body>
+    {% include 'includes/_navbar.html' %}
+
+    <div class="background-container background-color">
+        <div class="loop-container container">
+            <div class="row container-border">
+                <div class="col-sm-4">
+                    <div class="image_3 background-container"><img src="{% static 'ride_order.png' %}">
+                        <h1 class="cabe_text text-setter" style="text-align: center;">Ride {{ ride_content.id }} Details
+                        </h1>
+                    </div>
+
+                </div>
+                <div class="col-sm-8">
+                    <h1 class="cabe_text text-setter bold-text">Destination : {{ride_content.destination_address}}
+                        {{arrival_datetime}}</h1>
+                    <h1 class="cabe_text text-setter">Estimated Arrival Time : {{ride_content.arrival_datetime}}</h1>
+                    <div class="row col-sm-8 ">
+                        <div class="col-sm-6">
+                            <h1 class="cabe_text text-setter">Ride Owner : {{ride_content.owner}}</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <h1 class="cabe_text text-setter">Driver: {{ride_content.driver}}</h1>
+                        </div>
+                    </div>
+                    <div class="row col-sm-8 ">
+                        <div class="col-sm-6">
+                            <h1 class="cabe_text text-setter">Current Passengers : {{ride_content.total_passengers}}
+                            </h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <h1 class="cabe_text text-setter">Status: Sharable | OPEN</h1>
+                        </div>
+                    </div>
+                    <h1 class="cabe_text text-setter">Maximum Passenger Capacity : NA
+                    </h1>
+                    <h1 class="cabe_text text-setter">Vehicle Type: NA</h1>
+                    <h1 class="cabe_text text-setter">License Plate: NA</h1>
+                    <h1 class="cabe_text text-setter">Additional Info: {{ ride_content.additional_info|default:"NA" }}
+                    </h1>
+
+                    <div class="row col-sm-8 ">
+                        <button type ="button" class="custom-button book_bt" data-bs-toggle="modal" data-bs-target="#myModal">JOIN RIDE
+                        </button>
+
+                        <div class="custom-button-back book_bt"><a href="{% url 'booking' %}">BACK</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Join Rides</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form inside the modal -->
+                    <form id="joinForm" method="post" action="{% url 'confirm_passenger' pk=ride_content.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="passengerCount">Number of Passengers:</label>
+                            <input type="number" class="form-control" id="passengerCount" name="passengerCount"
+                                required>
+                        </div>
+                        <!-- OK and Cancel buttons -->
+                        <button type="submit" class="btn btn-primary">OK</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> 
+</body>
+
+</html>
+
+{% endblock %}

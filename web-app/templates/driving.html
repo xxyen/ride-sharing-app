@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+</head>
+<style>
+    .custom-label {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 8px;
+        text-align: left;
+        margin-top: 10px;
+
+    }
+
+    .custom-search {
+        margin-top: 20px;
+    }
+
+    .background-container {
+        padding: 30px;
+    }
+
+    .loop-container {
+        margin-bottom: -100px;
+        position: relative;
+        color: black;
+    }
+
+    .smaller-image {
+        max-width: 200px;
+        max-height: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .container-border {
+        border: 1.2px dashed rgb(156, 155, 155);
+        padding: 0;
+        margin: 60px;
+        margin-top: 120px;
+        margin-bottom: 120px;
+        border-radius: 10px;
+    }
+
+    .container-border .row {
+        margin: 0;
+        padding: 0;
+    }
+
+    .text-container {
+        padding: 5;
+    }
+
+    .text-setter {
+        font-size: 18px;
+        /* Set the desired font size */
+    }
+
+    .custom-button {
+        width: 600px;
+        height: 20px;
+        border-radius: 10px;
+        position: absolute;
+        bottom: 100px;
+        right: -350px;
+    }
+
+
+    .bold-text {
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .background-color {
+        background-color: #1a1a1a;
+    }
+
+    .theme-color {
+        color: white;
+    }
+
+    .custom-button-search {
+        margin-top: 15px;
+        margin-bottom: -20px;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        border-color: #171d27;
+        background-color: #fff;
+        background-image: radial-gradient(ellipse at bottom, #f6f6f8 50%, transparent 75%);
+        background-position: center bottom;
+        background-size: 0% 0%;
+        background-repeat: no-repeat;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s;
+        will-change: background-size, transform;
+        box-shadow: 0px 0px 2px 2px rgb(195, 190, 190);
+        font-size: 20px;
+        max-width: 250px;
+        min-width: 200px;
+        max-height: 50px;
+        overflow: hidden;
+        text-align: center;
+        line-height: 10px;
+    }
+
+    /* Change style on hover */
+    .custom-button-search :hover {
+        background-color: #f4db31;
+    }
+</style>
+
+<body>
+    {% include 'includes/_navbar.html' %}
+    <!-- Your page-specific content goes here -->
+
+
+    <div class="background-container background-color">
+        <div class="col-md-6 mx-auto text-center background-color ">
+            <h1 class="booking_text">Book a City Taxi to your destination in town</h1>
+            <div id="contact_bg">
+                <div id="input_main">
+                    <div class="container">
+                        <h2 class="request_text theme-color">Make extra money driving on your time</h2>
+                        <form id="search-form" action="{% url 'search_drives' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="vehicle_type" class="custom-label">Vehicle Type</label>
+                                        <input type="text" class="form-control" id="vehicle_type" name="vehicle_type">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="capacity" class="custom-label">Vehicle Capacity</label>
+                                        <input type="number" class="form-control" id="capacity" name="capacity">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="additional_info" class="custom-label">Additional Info</label>
+                                <input type="text" class="form-control" id="additional_info" name="additional_info">
+                            </div>
+                            <!-- <div class="send_bt" type="submit"><a href="{% url 'search_rides' %}">SEARCH</a></div> -->
+                            <button class="custom-button-search" type="submit">SEARCH</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="booking" class="ride_section background-container">
+        <div class="container">
+            <div class="ride_main">
+                <h1 class="ride_text">Available <span style="color: #f4db31;">Rides</span></h1>
+            </div>
+        </div>
+    </div>
+
+    <div id="rides-container">
+        {% for ride in rides %}
+        <div class="loop-container container">
+            <div class="row container-border">
+                <div class="col-sm-4">
+                    <div class="image_3 background-container"><img src="{% static 'ride_order.png' %}"
+                            class="smaller-image">
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <h1 class="cabe_text text-setter bold-text">Destination : {{ride.destination_address}}</h1>
+                    <h1 class="cabe_text text-setter">Estimated Arrival Time : {{ride.arrival_datetime}}</h1>
+                    <div class="row col-sm-8 ">
+                        <div class="col-sm-6">
+                            <h1 class="cabe_text text-setter">{{ride.total_passengers}} passengers </h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <h1 class="cabe_text text-setter">Status : {% if ride.shared_ride %}
+                                Sharable
+                                {% else %}
+                                Unsharable
+                                {% endif %}</h1>
+                        </div>
+                    </div>
+                    <div class="custom-button text-setter book_bt ">
+                        <a href="{% url 'drive_detail' pk=ride.id %}">
+                            TAKE NOW
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- javascript
+    <script>
+        function searchRides() {
+            var formData = $('#search-form').serialize();
+            $.ajax({
+                url: '{% url "search_rides" %}',
+                method: 'POST',
+                data: formData,
+                success: function (data) {
+                    $('#rides-container').html(data);
+                },
+                error: function () {
+                    console.error('Failed to fetch data.');
+                }
+            });
+        }
+    </script> -->
+
+</body>
+
+</html>
+
+{% endblock %}
