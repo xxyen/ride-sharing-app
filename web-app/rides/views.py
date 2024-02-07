@@ -439,21 +439,42 @@ def confirm_driver(request,pk):
                     ride.status = "confirmed"
                     ride.save() 
                     sendEmailAuto(request,pk)
-                    messages.success(request, "You have successfully confirmed the ride.")
-                    return redirect('driving')                
+                    # messages.success(request, "You have successfully confirmed the ride.")
+                    # return redirect('driving')      
+                    return JsonResponse({
+                    'title': 'Success',
+                    'message': 'You have successfully confirmed the ride.',
+                    'redirect': '/driving'
+                })          
                 else:
-                    print(333333333333333333)
-                    messages.error(request, "Capacity Exceeded.") 
-                    return redirect('driving')
+                    # print(333333333333333333)
+                    # messages.error(request, "Capacity Exceeded.") 
+                    # return redirect('driving')
+                     # 返回容量超出的JSON响应
+                    return JsonResponse({
+                        'title': 'Error',
+                        'message': 'Capacity exceeded. You cannot take this ride.',
+                        'redirect': '/driving' 
+                    })
             else:
-                print(222222222222222)
-                messages.error(request, "Please set your driver status to OPEN.")
-                print(222222222222222)
-                return redirect('profile')
+                # print(222222222222222)
+                # messages.error(request, "Please set your driver status to OPEN.")
+                # print(222222222222222)
+                # return redirect('profile')
+                return JsonResponse({
+                'title': 'Error',
+                'message': 'You are not authorized to confirm rides as a driver.',
+                'redirect': '/profile' 
+            })
         else:
-            print(11111111111111111)
-            messages.error(request, "Please verify to become a driver first.")
-            return redirect('profile')
+            # print(11111111111111111)
+            # messages.error(request, "Please verify to become a driver first.")
+            # return redirect('profile')
+            return JsonResponse({
+            'title': 'Error',
+            'message': 'Invalid request method.',
+            'redirect': '/profile' 
+        })
         
 
     return redirect('profile')
