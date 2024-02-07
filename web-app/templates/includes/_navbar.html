@@ -1,35 +1,86 @@
 {% load static %}
+<style>
+  .custom-container-width {
+    width: 90%; 
+    max-width: none; 
+}
+
+</style>
 <div id="home.html" class="header_section">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6 col-lg-3">
-                <div class="logo"><a href="{% url 'home' %}"><img src="{% static 'logo.png' %}"></a></div>
-            </div>
-            <div class="col-sm-6 col-lg-9">
-                <div class="menu_text">
-                    <ul>
-                        <li><a href="{% url 'home' %}">Home</a></li>                                                    
-                        <li><a href="#about">About</a></li>
-                        <li><a href="{% url 'driving' %}">Driving</a></li>
-                        <li><a href="{% url 'booking' %}">Booking</a></li>
-                        <li><a href="#contact">Contact Us</a></li>
-                        <li><a href="#"><img src="{% static 'search-icon.png' %}"></a></li>
-                        <div id="myNav" class="overlay">
-                            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                            <div class="overlay-content">
-                                <a href="{% url 'home' %}">Home</a>
-                                <a href="#about">About</a>
-                                <a href="#taxis">Taxi</a>
-                                <a href="{% url 'booking' %}">Booking</a>
-                                <a href="#contact">Contact Us</a>
-                            </div>
-                        </div>
-                        <span style="font-size:33px;cursor:pointer; color: #ffffff;" onclick="openNav()">
-                            <img src="{% static 'toggle-menu.png'%}" class="toggle_menu">
-                        </span>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="">
+      <div class="row align-items-center">
+          <div class="col-sm-1 col-lg-3 ml-0">
+            <div class="logo"><a href="{% url 'home' %}"><img src="{% static 'logo.png' %}" style="padding-right: 50px; height: auto;"></a></div>
+          </div>
+          <div class="col-sm-8 col-lg-9 ml-auto p-0" style="margin-left: -100px; height: auto;">
+              <div class="menu_text">
+                  <ul>
+                      <li><a href="{% url 'home' %}">Home</a></li>                                                    
+                      <li><a href="{% url 'ride_request' %}">Request</a></li>
+                      <li><a href="{% url 'driving' %}">Driving</a></li>
+                      <li><a href="{% url 'booking' %}">Booking</a></li>
+                      <li class="nav-item">
+                          <span class="navbar-text">
+                              Welcome, {{ user.username }}
+                          </span>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="/login">Log Out</a>
+                      </li>
+                      <div id="myNav" class="overlay">
+                          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                          <div class="overlay-content">
+                              <a href="{% url 'home' %}">Home</a>
+                              <a href="{% url 'profile' %}">My Profile</a>
+                              <a href="{% url 'my_rides' %}">My Rides</a>
+                              <a href="{% url 'login' %}">Log Out</a>
+                          </div>
+                      </div>
+                      <span style="font-size:33px;cursor:pointer; color: #ffffff;" onclick="openNav()">
+                          <img src="{% static 'toggle-menu.png'%}" class="toggle_menu " >
+                      </span>
+                  </ul>
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
+
+  <!-- Javascript files-->
+  <script src="{% static 'jquery.min.js' %}"></script>
+  <script src="{% static 'popper.min.js' %}"></script>
+  <script src="{% static 'bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'jquery-3.0.0.min.js' %}"></script>
+  <script src="{% static 'plugin.js' %}"></script>
+  <!-- sidebar -->
+  <script src="{% static 'jquery.mCustomScrollbar.concat.min.js' %}"></script>
+  <script src="{% static 'custom.js' %}"></script>
+  <!-- javascript -->
+  <script src="{% static 'owl.carousel.js' %}"></script>
+  <script src="{% static 'jquery.fancybox.min.js' %}"></script>
+
+  <script>
+    $(document).ready(function () {
+      $(".fancybox").fancybox({
+        openEffect: "none",
+        closeEffect: "none"
+      });
+
+      $(".zoom").hover(function () {
+
+        $(this).addClass('transition');
+      }, function () {
+
+        $(this).removeClass('transition');
+      });
+    });
+  </script>
+  <script>
+    function openNav() {
+      document.getElementById("myNav").style.width = "100%";
+    }
+
+    function closeNav() {
+      document.getElementById("myNav").style.width = "0%";
+    }
+  </script>

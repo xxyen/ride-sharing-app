@@ -2,8 +2,8 @@
 
 {% load crispy_forms_tags %}
 {% block content %}
-{% include "navbar.html" %}
-
+{% include 'includes/_navbar.html' %}
+<div style="width: 100px; height: 80px;"></div>
 <div class="container mt-3">
     <h2>Personal Info</h2>
     <p>Username: {{ request.user.username }}</p>
@@ -36,13 +36,13 @@
             </div>
         </div>
     </div>
-
+    <div style="width: 100px; height: 20px;"></div>
     <h2>Change Password</h2>
-
+    <div style="width: 100px; height: 10px;"></div>
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
         Change Password
     </button>
-
+    
     <!-- Change Password -->
     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-
+    <div style="width: 100px; height: 20px;"></div>
     {% if is_driver %}
     <!-- <h2>Current Driver Status: {% if request.user.driver_status %}OPEN{% else %}CLOSED{% endif %}</h2> -->
     <h2>Current Driver Status: 

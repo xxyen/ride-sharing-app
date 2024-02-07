@@ -22,4 +22,5 @@ urlpatterns = [
     path('driving/', views.DriveIndexView.as_view(), name='driving'),
     path('driving/search-drives/',views.searchDrives, name = 'search_drives'),
     path('driving/detail/<int:pk>', views.DriveDetailView.as_view(),name = 'drive_detail'),
+    path('driving/detail/confirm_driver/<int:pk>',views.confirm_driver,name = 'confirm_driver'),
 ]

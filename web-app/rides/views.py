@@ -1,23 +1,91 @@
 
+from django.urls import reverse
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth import login
 from django.views.generic import ListView,DetailView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserEditForm, CustomUserPasswordChangeForm, VehicleForm, DriverRegistrationForm, RideRequestForm
-from .models import CustomUser, Vehicle, Ride
+from .models import Vehicle, Ride
 from django.contrib import messages
 
 from .models import *
 from django.db.models import F
 from datetime import datetime
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db.models import Q
+import os.path
+import base64
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
-# Create your views here.
+# Authentication and service creation
+def gmail_authenticate():
+    SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+    creds = None
+    # token.json stored user access and refresh tokens
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    # Authentication if no valid credentials are available
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            # This credentials.json is the credential you download from Google API portal when you 
+            # created the OAuth 2.0 Client IDs
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            # this is the redirect URI which should match your API setting, you can 
+            # find this setting in Credentials/Authorized redirect URIs at the API setting portal
+            creds = flow.run_local_server(host='vcm-38514.vm.duke.edu', port=8080)
+        # Save vouchers for later use
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+
+    return build('gmail', 'v1', credentials=creds)
+
+# Create and send emails
+def send_message(service, sender, to, subject, msg_html):
+    message = MIMEMultipart('alternative')
+    message['from'] = sender
+    message['to'] = to
+    message['subject'] = subject
+
+    msg = MIMEText(msg_html, 'html')
+    message.attach(msg)
+
+    raw = base64.urlsafe_b64encode(message.as_bytes())
+    raw = raw.decode()
+    body = {'raw': raw}
+
+    message = (service.users().messages().send(userId="me", body=body).execute())
+    print(f"Message Id: {message['id']}")
+
+
+
+
+# SEND EMAIL TO USER
+def sendEmailAuto(request,pk):
+    if request.method == 'POST':
+        ride = get_object_or_404(Ride,pk=pk)
+        all_users = list(ride.sharers.all()) + [ride.owner]
+        user = all_users[0]
+        driver_name = request.user.username
+        service = gmail_authenticate()
+        for user in all_users:
+            print(user.email)
+            send_message(service, "xueqianyi222@gmail.com", user.email, "Your Ride Confirmation", f'Dear {user.last_name},\n\n Your ride has been confirmed by the driver {driver_name}. Thank you for using our service.')
+            print(1111)
+
+
+
 def register(response):
     if response.method == "POST":
         form = RegisterForm(response.POST)
@@ -265,13 +333,6 @@ def searchDrives(response):
         rides = Ride.objects.filter(base_query).exclude(Q(owner=current_user) | Q(sharers=current_user))
 
         print(rides)
-
-        # rides = Ride.objects.filter(
-        #     Q(vehicle_type__isnull=True) | Q(vehicle_type=vehicle_type_input),
-        #     Q(additional_info__isnull=True) | Q(additional_info=additional_info_input),
-        #     status='open',
-        #     total_passengers__lte=capacity
-        # ).exclude(Q(owner=current_user) | Q(sharers=current_user))
         
         return render(response, "driving.html", {"rides": rides})
     else:
@@ -286,9 +347,6 @@ def confirm_passengers(response,pk):
     ride = get_object_or_404(Ride, pk=pk)
     current_passengers = ride.total_passengers
     driver = ride.driver
-    # vehicle = driver.vehicle if driver else None
-    # max_passengers =  vehicle.max_passengers
-    # valid_passengers = max_passengers - current_passengers
     if response.method == "POST":
         passengerCount = response.POST.get('passengerCount')
         if int(passengerCount) > 0 :
@@ -364,29 +422,31 @@ class DriveDetailView(DetailView):
 
 
         return context
+    
+from django.core.mail import send_mail   
 
 # DRIVE CONFIRM
-def confirm_driver(response,pk):
+def confirm_driver(request,pk):
     # authentication
-    if response.method == "POST":
-        print(1111111111111111111)
-        if response.user.is_driver:
-            print(1111111111111111111)
+    if request.method == "POST":
+        if request.user.is_driver:
             ride = get_object_or_404(Ride, pk=pk)
-            vehicle = get_object_or_404(Vehicle,owner=response.user)
+            vehicle = get_object_or_404(Vehicle,owner=request.user)
             max_passengers = vehicle.max_passengers
             current_passengers = ride.total_passengers
             if current_passengers <= max_passengers:
                 ride.driver = vehicle.owner
                 ride.status = "confirmed"
                 ride.save() 
-                messages.success(response, "You have successfully confirmed the ride.")
+                sendEmailAuto(request,pk)
+                messages.success(request, "You have successfully confirmed the ride.")
                 return redirect('driving')
             else:
-                messages.error(response, "Capacity Exceeded.") 
-                return redirect('driving/detail/<int:pk>')
+                messages.error(request, "Capacity Exceeded.") 
+          
         else:
-            messages.error(response, "Please verify to become a driver first.")
-            return redirect('driving/detail/<int:pk>')
-    else:
-        return redirect('driving/detail/<int:pk>')
+            messages.error(request, "Please verify to become a driver first.")
+            print(request.path_info)
+        
+
+    return render(request, 'drive-detail.html', {'pk': pk})
