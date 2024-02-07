@@ -423,30 +423,37 @@ class DriveDetailView(DetailView):
 
         return context
     
-from django.core.mail import send_mail   
 
 # DRIVE CONFIRM
 def confirm_driver(request,pk):
     # authentication
     if request.method == "POST":
         if request.user.is_driver:
-            ride = get_object_or_404(Ride, pk=pk)
-            vehicle = get_object_or_404(Vehicle,owner=request.user)
-            max_passengers = vehicle.max_passengers
-            current_passengers = ride.total_passengers
-            if current_passengers <= max_passengers:
-                ride.driver = vehicle.owner
-                ride.status = "confirmed"
-                ride.save() 
-                sendEmailAuto(request,pk)
-                messages.success(request, "You have successfully confirmed the ride.")
-                return redirect('driving')
+            if request.user.driver_status:
+                ride = get_object_or_404(Ride, pk=pk)
+                vehicle = get_object_or_404(Vehicle,owner=request.user)
+                max_passengers = vehicle.max_passengers
+                current_passengers = ride.total_passengers
+                if current_passengers <= max_passengers:
+                    ride.driver = vehicle.owner
+                    ride.status = "confirmed"
+                    ride.save() 
+                    sendEmailAuto(request,pk)
+                    messages.success(request, "You have successfully confirmed the ride.")
+                    return redirect('driving')                
+                else:
+                    print(333333333333333333)
+                    messages.error(request, "Capacity Exceeded.") 
+                    return redirect('driving')
             else:
-                messages.error(request, "Capacity Exceeded.") 
-          
+                print(222222222222222)
+                messages.error(request, "Please set your driver status to OPEN.")
+                print(222222222222222)
+                return redirect('profile')
         else:
+            print(11111111111111111)
             messages.error(request, "Please verify to become a driver first.")
-            print(request.path_info)
+            return redirect('profile')
         
 
-    return render(request, 'drive-detail.html', {'pk': pk})
+    return redirect('profile')

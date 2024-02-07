@@ -26,15 +26,6 @@ SECRET_KEY = 'django-insecure-hn@l)9o8#c9)t$!d0mfv69tbfby__rf1rauuagd4#d6e+q8o@j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'xueqianyi222@gmail.com'
-EMAIL_HOST_PASSWORD = 'qsgvmsknhnwxhpvj'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = 'xueqianyi222@gmail.com'
-SERVER_EMAIL = 'xueqianyi222@gmail.com'
-
 
 ALLOWED_HOSTS = ["web", "67.159.94.227","67.159.89.242","vcm-38514.vm.duke.edu"]
 
@@ -93,15 +84,15 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE' : 'django.db.backends.postgresql',
         # local develop
-        'NAME' : 'vtalawcz',
-        'USER' : 'vtalawcz',
-        'PASSWORD' : 'KbPNCdIZtNtI-ikMwfYN39UkmEoT8_pb',
-        'HOST' : 'jelani.db.elephantsql.com',
+        # 'NAME' : 'vtalawcz',
+        # 'USER' : 'vtalawcz',
+        # 'PASSWORD' : 'KbPNCdIZtNtI-ikMwfYN39UkmEoT8_pb',
+        # 'HOST' : 'jelani.db.elephantsql.com',
         # docker depoly
-        # 'NAME' : 'postgres',
-        # 'USER' : 'postgres',
-        # 'PASSWORD' : 'postgres',
-        # 'HOST' : 'db',
+        'NAME' : 'postgres',
+        'USER' : 'postgres',
+        'PASSWORD' : 'postgres',
+        'HOST' : 'db',
         'PORT' : 5432,
     }
 }

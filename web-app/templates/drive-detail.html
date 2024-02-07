@@ -143,15 +143,33 @@
                     <h1 class="cabe_text text-setter">Additional Info: {{ ride_content.additional_info|default:"NA" }}
                     </h1>
 
-                    <div class="row col-sm-8 ">
-                        <form id="ConfirmForm" method="post" action="{% url 'confirm_driver' pk=ride_content.id %}">
-                            {% csrf_token %}
-                        <button type ="submit" class="custom-button book_bt" >TAKE IT
-                        </button>
-                    </form>
-
-                        <div class="custom-button-back book_bt" ><a href="{% url 'driving' %}">BACK</a></div>
+                    {% if messages %}
+                    <div class="container mt-3">
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% elif message.tags == 'error' %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
+                {% endif %}
+                
+                <!-- Your existing content goes here -->
+                <div class="row col-sm-8">
+                    <form id="ConfirmForm" method="post" action="{% url 'confirm_driver' pk=ride_content.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="custom-button book_bt">TAKE IT</button>
+                    </form>
+                    <div class="custom-button-back book_bt"><a href="{% url 'driving' %}">BACK</a></div>
+                </div>
+
                 </div>
             </div>
         </div>
@@ -184,7 +202,7 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 </body>
 
 </html>
