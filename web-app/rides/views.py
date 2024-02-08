@@ -1,5 +1,4 @@
 
-from django.urls import reverse
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth import login
 from django.views.generic import ListView,DetailView
@@ -10,7 +9,6 @@ from .models import Vehicle, Ride
 from django.contrib import messages
 
 from .models import *
-from django.db.models import F
 from datetime import datetime
 from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse
@@ -25,7 +23,7 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
-
+import requests
 # Authentication and service creation
 def gmail_authenticate():
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']

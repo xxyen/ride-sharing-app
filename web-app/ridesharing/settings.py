@@ -84,16 +84,16 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE' : 'django.db.backends.postgresql',
         # local develop
-        # 'NAME' : 'vtalawcz',
-        # 'USER' : 'vtalawcz',
-        # 'PASSWORD' : 'KbPNCdIZtNtI-ikMwfYN39UkmEoT8_pb',
-        # 'HOST' : 'jelani.db.elephantsql.com',
+        'NAME' : 'vtalawcz',
+        'USER' : 'vtalawcz',
+        'PASSWORD' : 'KbPNCdIZtNtI-ikMwfYN39UkmEoT8_pb',
+        'HOST' : 'jelani.db.elephantsql.com',
         # docker depoly
-        'NAME' : 'postgres',
-        'USER' : 'postgres',
-        'PASSWORD' : 'postgres',
-        'HOST' : 'db',
-        'PORT' : 5432,
+        # 'NAME' : 'postgres',
+        # 'USER' : 'postgres',
+        # 'PASSWORD' : 'postgres',
+        # 'HOST' : 'db',
+        # 'PORT' : 5432,
     }
 }
 
