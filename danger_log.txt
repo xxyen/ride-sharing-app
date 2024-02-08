@@ -1,0 +1,31 @@
+Danger Log
+Qianyi Xue (qx49)  Xinyi Xie(xx98)
+
+1. Already installed google etc. modules, but the modules don't exist in docker when we run 'sudo docker-compose up'. Always reporting errors after we regenerate "requirements.txt".
+Solution: run 'sudo docker-compose build --no-cache' to clean up the cache in Docker.
+
+2. POST method is invalid when using <a> and <form> together. It may produce ambiguity when using them toghter. In Django, form submissions typically use the <form> element and include a button (<button> or <input type="submit">) for submission. 
+
+3. pk in primary key in django generated automatically. Both pk and user model in Django can serve as unique identifiers for data. We learned how to use it to link to the Detail Page.
+<a href="{% url 'item_detail' pk=item.pk %}">View Details</a>
+
+4. We used static resources such as js, css and images. We had to restarted the server when We made a change to a static resource. But We searched and learned it usually doesn't require it. 
+
+5. In django, we can use class-based views (CBVs) and function-based views (FBVs). When We designed search page, We used ListView to show the list of items and DetailView to present details. And it often done using 'as_view()' method. while FBVs are basically simpler and more concise, goal-oriented. Dirctly reference it in urls.py.
+
+6. Confused with 'redirect' and 'render'. If we want to refresh a page, using render other than redirect. The response returned by render contains rendered HTML content, while the response returned by redirect contains redirect information. 
+
+7. Handling partial updates in Django. In our Search Page, we put the search bar and filter at the top of page and the following is results. But it is hard to update the page partially. A better method is to apply Ajax. While Ajax is a commonly used method for achieving asynchronous communication and dynamic updates without refreshing the entire page, Django provides mechanisms for partial updates as well.
+
+8. Query in Django.
+The __isnull lookup is used to filter querysets based on whether a field is NULL or not.
+The exclude() method is used to filter querysets by excluding objects that match certain conditions. 
+The Q object is used to construct complex queries by combining multiple conditions with logical operators (AND, OR).
+
+rides = Ride.objects.filter(
+            destination_address=destination,
+            arrival_datetime=arrival_time,
+            shared_ride=True,
+            status='open',
+            driver__isnull=True, # driver filed is NULL
+        ).exclude(Q(sharers=current_user) | Q(owner=current_user)) # Excludes rides where either the current user is a sharer or the current user is the owner.

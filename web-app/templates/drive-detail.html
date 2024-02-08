@@ -143,7 +143,7 @@
                     <h1 class="cabe_text text-setter">Additional Info: {{ ride_content.additional_info|default:"NA" }}
                     </h1>
 
-                    {% if messages %}
+                    <!-- {% if messages %}
                     <div class="container mt-3">
                         {% for message in messages %}
                             {% if message.tags == 'success' %}
@@ -159,7 +159,7 @@
                             {% endif %}
                         {% endfor %}
                     </div>
-                {% endif %}
+                {% endif %} -->
                 
                 <!-- Your existing content goes here -->
                 <div class="row col-sm-8">
@@ -203,6 +203,59 @@
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Message will be set by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- JavaScript for AJAX Form Submission and Modal Handling -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var confirmForm = document.getElementById('ConfirmForm');
+        confirmForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting via the browser.
+            var formData = new FormData(confirmForm);
+
+            fetch(confirmForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Set modal title and body
+                document.getElementById('modalLabel').textContent = data.title;
+                document.querySelector('#messageModal .modal-body').textContent = data.message;
+
+                // Show modal
+                var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
+
+                // Handle modal close event
+                $('#messageModal').on('hidden.bs.modal', function () {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
 </body>
 
 </html>

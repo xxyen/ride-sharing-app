@@ -123,7 +123,7 @@
                 <div id="input_main">
                     <div class="container">
                         <h2 class="request_text theme-color">Your everyday travel partner</h2>
-                        <form id="search-form" action="{% url 'search_rides' %}" method="post">
+                        <form id="search-form" action="{% url 'search_rides' %}" method="post" onsubmit="return validateForm()">
                             {% csrf_token %}
                             <div class="form-group">
                                 <div class="row">
@@ -193,23 +193,25 @@
         {% endfor %}
     </div>
 
-    <!-- javascript
     <script>
-        function searchRides() {
-            var formData = $('#search-form').serialize();
-            $.ajax({
-                url: '{% url "search_rides" %}',
-                method: 'POST',
-                data: formData,
-                success: function (data) {
-                    $('#rides-container').html(data);
-                },
-                error: function () {
-                    console.error('Failed to fetch data.');
-                }
-            });
+        // JavaScript function to validate the form before submission
+        function validateForm() {
+            // Get the values of the input fields
+            var arrivalTime = document.getElementById('arrival_datetime').value;
+            var passengers = document.getElementById('passengers').value;
+            var destination = document.getElementById('destination_address').value;
+    
+            // Check if any of the fields is empty
+            if (arrivalTime === '' || passengers === '' || destination === '') {
+                // If any field is empty, show an alert and prevent form submission
+                alert('Please fill in all the required fields');
+                return false;
+            }
+    
+            // If all fields are filled, allow form submission
+            return true;
         }
-    </script> -->
+    </script>
 
 </body>
 

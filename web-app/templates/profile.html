@@ -89,13 +89,28 @@
                     <div class="modal-body">
                         {% csrf_token %}
                         <!-- Driver Status Select -->
+                        <!-- Driver Status Radio Buttons -->
                         <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="driver_status" id="statusOpen" value="true" {% if request.user.driver_status %}checked{% endif %}>
+                                <label class="form-check-label" for="statusOpen">
+                                    OPEN
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="driver_status" id="statusClosed" value="false" {% if not request.user.driver_status %}checked{% endif %}>
+                                <label class="form-check-label" for="statusClosed">
+                                    CLOSED
+                                </label>
+                            </div>
+                        </div>
+                        <!-- <div class="mb-3">
                             <label for="driverStatusSelect" class="form-label">Driver Status</label>
                             <select class="form-select" id="driverStatusSelect" name="driver_status">
                                 <option value="true" {% if request.user.driver_status %}selected{% endif %}>OPEN</option>
                                 <option value="false" {% if not request.user.driver_status %}selected{% endif %}>CLOSED</option>
                             </select>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
