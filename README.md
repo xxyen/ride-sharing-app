@@ -7,8 +7,8 @@
 
 ## Installation
 ```
-git clone git@gitlab.oit.duke.edu:qx49/568hw1.git
-cd 568hw1
+git clone git@gitlab.oit.duke.edu:qx49/erss-hwk1-qx49-xx98.git
+cd erss-hwk1-qx49-xx98
 sudo docker-compose up
 ```
 
@@ -16,7 +16,7 @@ sudo docker-compose up
 
 ## Authors
 =======
-# 568hw1
+# erss-hwk1-qx49-xx98
 
 
 
@@ -33,14 +33,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.oit.duke.edu/qx49/568hw1.git
+git remote add origin https://gitlab.oit.duke.edu/qx49/erss-hwk1-qx49-xx98.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.oit.duke.edu/qx49/568hw1/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.oit.duke.edu/qx49/erss-hwk1-qx49-xx98/-/settings/integrations)
 
 ## Collaborate with your team
 
